@@ -16,22 +16,37 @@ namespace memoryAllocation
         {
             InitializeComponent();
         }
+
+        // holes and process lists
         List<Hole> arrayOfHoles=new List<Hole>();
         List<Process> arrayOfProcesses = new List<Process>();
+
         //insert holes
         private void button1_Click(object sender, EventArgs e)
         {
-            
             Hole inputHole=new Hole();
-            inputHole.startingAddress = int.Parse(holeStartingAdressText.Text);
-            inputHole.size = int.Parse(holeSizeText.Text);
+            inputHole.startingAddress = (int)holeStartingAdressText.Value;
+            inputHole.size = (int)holeSizeText.Value;
+
+            //make sure that the input-hole isn't existing already
+            if(arrayOfHoles.Count != 0)
+            {
+                foreach(Hole P in arrayOfHoles)
+                {
+                    if ((inputHole.startingAddress + inputHole.size) <= (P.startingAddress + P.size)
+                        && (inputHole.startingAddress>=P.startingAddress))
+                    { MessageBox.Show("Hole is already existing"); return; }
+                }
+            }
             arrayOfHoles.Add(inputHole);
+
             //drawing the inserted hole
             Label holeLabel = new Label();
             holeLabel.Location = new Point(0,inputHole.startingAddress);
             holeLabel.Width = 200;
             holeLabel.Height = inputHole.size;
             holeLabel.BackColor = Color.LightBlue;
+            holeLabel.MouseHover += new EventHandler(holeLabel_Hover);
             panel.Controls.Add(holeLabel);
             # region concatenate the array of holes
             //concatenate the array of holes
@@ -58,13 +73,16 @@ namespace memoryAllocation
 
             #endregion
         }
+
+
         //insert processes with 3 options
         private void button2_Click(object sender, EventArgs e)
         {
             
             Process inputProcess = new Process();
-            inputProcess.id = int.Parse(processIDText.Text);
-            inputProcess.size = int.Parse(processSizeText.Text);
+            inputProcess.id = (int)processIDText.Value;
+            inputProcess.size = (int)processSizeText.Value;
+
             if(radioButtonFirstFit.Checked==true)
             {
                 bool flag = false;
@@ -82,21 +100,21 @@ namespace memoryAllocation
                         processButton.Location = new Point(0,hole.startingAddress);
                         processButton.Width =200;
                         processButton.Height =inputProcess.size;
-                        processButton.Text = "process " + inputProcess.id.ToString();
+                        processButton.Text = "Process " + inputProcess.id.ToString();
                         processButton.BackColor = Color.Khaki;
                         processButton.Click += new EventHandler(processButton_Click);
-                        
+                        processButton.MouseHover += new EventHandler(processButton_Hover);
                         panel.Controls.Add(processButton);
                         processButton.BringToFront();
 
                         //hole handling
                         hole.size -= inputProcess.size;
                         hole.startingAddress += inputProcess.size;
-                        if (hole.size == 0) arrayOfHoles.Remove(hole);
+                        if (hole.size == 0) { arrayOfHoles.Remove(hole); }
                         break;
                     }
                 }
-                if (!flag) MessageBox.Show("process must wait");
+                if (!flag) MessageBox.Show("Process must wait");
             }
             else if(radioButtonBestFit.Checked==true)
             {
@@ -117,10 +135,10 @@ namespace memoryAllocation
                         processButton.Location = new Point(0, hole.startingAddress);
                         processButton.Width = 200;
                         processButton.Height = inputProcess.size;
-                        processButton.Text = "process " + inputProcess.id.ToString();
+                        processButton.Text = "Process " + inputProcess.id.ToString();
                         processButton.BackColor = Color.Khaki;
                         processButton.Click += new EventHandler(processButton_Click);
-
+                        processButton.MouseHover += new EventHandler(processButton_Hover);
                         panel.Controls.Add(processButton);
                         processButton.BringToFront();
 
@@ -131,7 +149,7 @@ namespace memoryAllocation
                         break;
                     }
                 }
-                if (!flag) MessageBox.Show("process must wait");
+                if (!flag) MessageBox.Show("Process must wait");
             }
             else if(radioButtonWorstFit.Checked==true)
             {
@@ -152,10 +170,10 @@ namespace memoryAllocation
                         processButton.Location = new Point(0, hole.startingAddress);
                         processButton.Width = 200;
                         processButton.Height = inputProcess.size;
-                        processButton.Text = "process " + inputProcess.id.ToString();
+                        processButton.Text = "Process " + inputProcess.id.ToString();
                         processButton.BackColor = Color.Khaki;
                         processButton.Click += new EventHandler(processButton_Click);
-
+                        processButton.MouseHover += new EventHandler(processButton_Hover);
                         panel.Controls.Add(processButton);
                         processButton.BringToFront();
 
@@ -166,16 +184,74 @@ namespace memoryAllocation
                         break;
                     }
                 }
-                if (!flag) MessageBox.Show("process must wait");
+                if (!flag) MessageBox.Show("Process must wait");
+            }
+
+             // show message where no method is choosen
+            else
+            {
+                MessageBox.Show("Please Choose a method of allocation");
             }
             
         }
+
+
+        // Show process details when hovered
+        private void processButton_Hover(object sender, EventArgs e)
+        {
+            Button processButton = sender as Button;
+           
+            ToolTip tip1 = new ToolTip();
+
+            // find process
+            int id = int.Parse((processButton.Text).Substring(8));
+            Process wantedProcess = new Process();
+            foreach (Process p in arrayOfProcesses)
+            {
+                if (p.id == id)
+                    wantedProcess = p;
+            }
+
+            // process info
+           string info = "Name: "+processButton.Text+"\nStarting Address: "
+               +wantedProcess.startingAddress.ToString()+"\nEnd Address: "+
+               (wantedProcess.startingAddress+wantedProcess.size).ToString()+
+               "\nSize: "+wantedProcess.size.ToString()+"\nClick to deallocate.";
+
+           tip1.SetToolTip(processButton, info);
+        }
+
+
+        // Show hole details when hovered
+        private void holeLabel_Hover(object sender, EventArgs e)
+        {
+            Label holeLabel = sender as Label;
+
+            ToolTip tip1 = new ToolTip();
+
+            // find hole based on starting address
+            int starting = holeLabel.Location.Y;
+            Hole wantedHole = new Hole();
+            foreach (Hole p in arrayOfHoles)
+            {
+                if (p.startingAddress == starting)
+                    wantedHole = p;
+            }
+
+            // hole info
+            string info = "Starting Address: " + wantedHole.startingAddress.ToString() +
+                "\nEnd Address: " + (wantedHole.startingAddress + wantedHole.size).ToString() +
+                "\nSize: " + wantedHole.size.ToString();
+
+            tip1.SetToolTip(holeLabel, info);
+        }
+
         //deallocation
         private void processButton_Click(object sender, EventArgs e)
         {
             Button processButton = sender as Button;
-            processButton.Visible = false;
-            
+            //processButton.Visible = false;
+
             int id = int.Parse((processButton.Text).Substring(8));
             Process wantedProcess = new Process();
             foreach(Process p in arrayOfProcesses)
@@ -189,29 +265,33 @@ namespace memoryAllocation
             replacedHole.size =wantedProcess.size;
             arrayOfHoles.Add(replacedHole);
 
-# region concatenate the array of holes
-            //concatenate the array of holes
-            if (arrayOfHoles.Count()>2)
-            for(int i=0;i<arrayOfHoles.Count();i++)
-            {
-                for(int j = 0; j < arrayOfHoles.Count()-1; j++)
-                {
-                    if( arrayOfHoles[i].size-arrayOfHoles[i].startingAddress == arrayOfHoles[j].startingAddress)
-                    {
-                        Hole newHole = new Hole();
-                        newHole.startingAddress = arrayOfHoles[i].startingAddress;
-                        newHole.size = arrayOfHoles[i].size + arrayOfHoles[j].size;
-                        arrayOfHoles.Remove(arrayOfHoles[i]);
-                        arrayOfHoles.Remove(arrayOfHoles[j]);
-                        arrayOfHoles.Add(newHole);
-                    }
-                }
-            }
-            //////////--------------------------/////////////
+            # region concatenate the array of holes
+                        //concatenate the array of holes
+                        if (arrayOfHoles.Count()>2)
+                        for(int i=0;i<arrayOfHoles.Count();i++)
+                        {
+                            for(int j = 0; j < arrayOfHoles.Count()-1; j++)
+                            {
+                                if( arrayOfHoles[i].size-arrayOfHoles[i].startingAddress == arrayOfHoles[j].startingAddress)
+                                {
+                                    Hole newHole = new Hole();
+                                    newHole.startingAddress = arrayOfHoles[i].startingAddress;
+                                    newHole.size = arrayOfHoles[i].size + arrayOfHoles[j].size;
+                                    arrayOfHoles.Remove(arrayOfHoles[i]);
+                                    arrayOfHoles.Remove(arrayOfHoles[j]);
+                                    arrayOfHoles.Add(newHole);
+                                }
+                            }
+                        }
+                        //////////--------------------------/////////////
 
-            #endregion
+                        #endregion
+
             arrayOfProcesses.Remove(wantedProcess);
+            panel.Controls.Remove(processButton);
         }
+
+
         //reset button
         private void button3_Click(object sender, EventArgs e)
         {
@@ -219,8 +299,7 @@ namespace memoryAllocation
             arrayOfProcesses.Clear();
             panel.Controls.Clear();
         }
-        
-        
+
 
     }
 }
