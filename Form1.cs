@@ -27,7 +27,7 @@ namespace memoryAllocation
             Hole inputHole=new Hole();
             inputHole.startingAddress = (int)holeStartingAdressText.Value;
             inputHole.size = (int)holeSizeText.Value;
-
+            if (inputHole.size == 0) {MessageBox.Show("Hole Size is Required"); return;}
             //make sure that the input-hole isn't existing already
             if(arrayOfHoles.Count != 0)
             {
@@ -82,7 +82,7 @@ namespace memoryAllocation
             Process inputProcess = new Process();
             inputProcess.id = (int)processIDText.Value;
             inputProcess.size = (int)processSizeText.Value;
-
+            if (inputProcess.size == 0) { MessageBox.Show("Process Size is Required"); return; }
             if(radioButtonFirstFit.Checked==true)
             {
                 bool flag = false;
@@ -109,7 +109,7 @@ namespace memoryAllocation
 
                         //hole handling
                         hole.size -= inputProcess.size;
-                        hole.startingAddress += inputProcess.size;
+                        hole.startingAddress += inputProcess.size+1;
                         if (hole.size == 0) { arrayOfHoles.Remove(hole); }
                         break;
                     }
@@ -144,7 +144,7 @@ namespace memoryAllocation
 
                         //hole handling
                         hole.size -= inputProcess.size;
-                        hole.startingAddress += inputProcess.size;
+                        hole.startingAddress += inputProcess.size+1;
                         if (hole.size == 0) arrayOfHoles.Remove(hole);
                         break;
                     }
@@ -179,7 +179,7 @@ namespace memoryAllocation
 
                         //hole handling
                         hole.size -= inputProcess.size;
-                        hole.startingAddress += inputProcess.size;
+                        hole.startingAddress += inputProcess.size+1;
                         if (hole.size == 0) arrayOfHoles.Remove(hole);
                         break;
                     }
@@ -298,6 +298,68 @@ namespace memoryAllocation
             arrayOfHoles.Clear();
             arrayOfProcesses.Clear();
             panel.Controls.Clear();
+        }
+        
+        //compact all holes into one and shift processes after it
+        private void compact_Click(object sender, EventArgs e)
+        {
+
+            if (arrayOfHoles.Count != 0)
+            {
+                //compact holes
+                arrayOfHoles = arrayOfHoles.OrderBy(arr => arr.startingAddress).ToList();
+                Hole allinone = new Hole();
+                allinone.startingAddress = arrayOfHoles[0].startingAddress;
+                allinone.size = 0;
+                foreach (Hole P in arrayOfHoles)
+                {
+                    allinone.size += P.size;
+                }
+                arrayOfHoles.Clear();
+                arrayOfHoles.Add(allinone);
+
+                if (arrayOfProcesses.Count != 0)
+                {
+                    //shift processes 
+                    arrayOfProcesses = arrayOfProcesses.OrderBy(arr => arr.startingAddress).ToList();
+                    arrayOfProcesses[0].startingAddress = allinone.startingAddress + allinone.size + 1;
+                    for (int i = 1; i < arrayOfProcesses.Count; i++)
+                    {
+                        arrayOfProcesses[i].startingAddress =
+                            arrayOfProcesses[i - 1].startingAddress + arrayOfProcesses[i - 1].size + 1;
+                    }
+                }
+
+                //draw new hole and processes
+
+                panel.Controls.Clear();
+                //draw hole
+                Label holeLabel = new Label();
+                holeLabel.Location = new Point(0, allinone.startingAddress);
+                holeLabel.Width = 200;
+                holeLabel.Height = allinone.size;
+                holeLabel.BackColor = Color.LightBlue;
+                holeLabel.MouseHover += new EventHandler(holeLabel_Hover);
+                panel.Controls.Add(holeLabel);
+                //draw processes
+                foreach (Process x in arrayOfProcesses)
+                {
+                    //drawing process as a button
+                    Button processButton = new Button();
+                    processButton.Location = new Point(0, x.startingAddress);
+                    processButton.Width = 200;
+                    processButton.Height = x.size;
+                    processButton.Text = "Process " + x.id.ToString();
+                    processButton.BackColor = Color.Khaki;
+                    processButton.Click += new EventHandler(processButton_Click);
+                    processButton.MouseHover += new EventHandler(processButton_Hover);
+                    panel.Controls.Add(processButton);
+                    processButton.BringToFront();
+                }
+            }
+
+            else { MessageBox.Show("No Holes avaliable"); }
+
         }
 
 

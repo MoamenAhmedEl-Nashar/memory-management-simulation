@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -46,6 +47,7 @@
             this.holeSizeText = new System.Windows.Forms.NumericUpDown();
             this.processIDText = new System.Windows.Forms.NumericUpDown();
             this.processSizeText = new System.Windows.Forms.NumericUpDown();
+            this.compact = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.holeStartingAdressText)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.holeSizeText)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.processIDText)).BeginInit();
@@ -81,7 +83,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.SystemColors.Control;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Location = new System.Drawing.Point(118, 146);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
@@ -95,9 +97,9 @@
             this.label3.Location = new System.Drawing.Point(118, 201);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 17);
+            this.label3.Size = new System.Drawing.Size(70, 17);
             this.label3.TabIndex = 4;
-            this.label3.Text = "hole size:";
+            this.label3.Text = "Hole size:";
             // 
             // label4
             // 
@@ -117,9 +119,9 @@
             this.label5.Location = new System.Drawing.Point(124, 450);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(79, 17);
+            this.label5.Size = new System.Drawing.Size(80, 17);
             this.label5.TabIndex = 7;
-            this.label5.Text = "process ID:";
+            this.label5.Text = "Process ID:";
             // 
             // label6
             // 
@@ -127,9 +129,9 @@
             this.label6.Location = new System.Drawing.Point(118, 506);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(91, 17);
+            this.label6.Size = new System.Drawing.Size(92, 17);
             this.label6.TabIndex = 8;
-            this.label6.Text = "process size:";
+            this.label6.Text = "Process size:";
             // 
             // button2
             // 
@@ -151,9 +153,9 @@
             this.label7.Location = new System.Drawing.Point(119, 565);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(143, 17);
+            this.label7.Size = new System.Drawing.Size(145, 17);
             this.label7.TabIndex = 12;
-            this.label7.Text = "choose methodology:";
+            this.label7.Text = "Choose methodology:";
             // 
             // radioButtonFirstFit
             // 
@@ -203,7 +205,7 @@
             this.button3.BackColor = System.Drawing.SystemColors.HotTrack;
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button3.ForeColor = System.Drawing.SystemColors.Info;
-            this.button3.Location = new System.Drawing.Point(790, 254);
+            this.button3.Location = new System.Drawing.Point(790, 235);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(88, 62);
             this.button3.TabIndex = 20;
@@ -259,12 +261,26 @@
             this.processSizeText.Size = new System.Drawing.Size(120, 23);
             this.processSizeText.TabIndex = 22;
             // 
+            // compact
+            // 
+            this.compact.BackColor = System.Drawing.SystemColors.HotTrack;
+            this.compact.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold);
+            this.compact.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.compact.Location = new System.Drawing.Point(790, 329);
+            this.compact.Name = "compact";
+            this.compact.Size = new System.Drawing.Size(88, 62);
+            this.compact.TabIndex = 23;
+            this.compact.Text = "Compact";
+            this.compact.UseVisualStyleBackColor = false;
+            this.compact.Click += new System.EventHandler(this.compact_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Control;
+            this.BackColor = System.Drawing.Color.AliceBlue;
             this.ClientSize = new System.Drawing.Size(1370, 692);
+            this.Controls.Add(this.compact);
             this.Controls.Add(this.processSizeText);
             this.Controls.Add(this.processIDText);
             this.Controls.Add(this.holeSizeText);
@@ -284,10 +300,11 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "Memory Manager";
             ((System.ComponentModel.ISupportInitialize)(this.holeStartingAdressText)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.holeSizeText)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.processIDText)).EndInit();
@@ -317,6 +334,7 @@
         private System.Windows.Forms.NumericUpDown holeSizeText;
         private System.Windows.Forms.NumericUpDown processIDText;
         private System.Windows.Forms.NumericUpDown processSizeText;
+        private System.Windows.Forms.Button compact;
     }
 }
 
