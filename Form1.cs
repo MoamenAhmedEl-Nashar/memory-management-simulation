@@ -83,6 +83,8 @@ namespace memoryAllocation
             inputProcess.id = (int)processIDText.Value;
             inputProcess.size = (int)processSizeText.Value;
             if (inputProcess.size == 0) { MessageBox.Show("Process Size is Required"); return; }
+            
+            //first fit
             if(radioButtonFirstFit.Checked==true)
             {
                 bool flag = false;
@@ -116,6 +118,8 @@ namespace memoryAllocation
                 }
                 if (!flag) MessageBox.Show("Process must wait");
             }
+
+            //best fit
             else if(radioButtonBestFit.Checked==true)
             {
                 bool flag = false;
@@ -151,6 +155,8 @@ namespace memoryAllocation
                 }
                 if (!flag) MessageBox.Show("Process must wait");
             }
+
+            //worst fit
             else if(radioButtonWorstFit.Checked==true)
             {
                 bool flag = false;
